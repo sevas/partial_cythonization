@@ -1,7 +1,6 @@
 """Main module."""
 import subprocess
 import shutil
-from datetime import datetime
 from pathlib import Path
 
 SETUP_PY = """
@@ -22,7 +21,9 @@ setup(
 """
 
 
-def obfuscate_package(src: str, dest: str, compile_all: bool = False):
+def obfuscate_package(
+    src: str, dest: str, compile_all: bool = False, clean: bool = False
+):
     """Obfuscate a python package.
 
     Parameters
@@ -31,6 +32,10 @@ def obfuscate_package(src: str, dest: str, compile_all: bool = False):
         Path to the source package.
     dest
         Path to the destination package.
+    compile_all
+        Whether to compile all python files found in the source package
+    clean
+        Whether to clean the cythonized files from the source package after obfuscation
     """
     src = Path(src)
     dest = Path(dest)
@@ -68,7 +73,7 @@ def obfuscate_package(src: str, dest: str, compile_all: bool = False):
         print("--- No files to obfuscate.")
         return
 
-    (src.parent / f"_obfuscate_list.txt").write_text("\n".join(to_obfuscate))
+    (src.parent / "_obfuscate_list.txt").write_text("\n".join(to_obfuscate))
     (src.parent / "setup_generated.py").write_text(SETUP_PY)
 
     print("--- Running cython on selected files...")
@@ -89,15 +94,18 @@ def obfuscate_package(src: str, dest: str, compile_all: bool = False):
                 to_clean.append(matching_ext[0])
             else:
                 raise FileNotFoundError(
-                    f"Could not find compiled file for {fp}. This means that cython failed to compile the file.")
+                    f"Could not find compiled file for {fp}. This means that cython failed to compile the file."
+                )
         else:
             dest_fp = dest / fp.relative_to(src_pkg_dir)
             dest_fp.parent.mkdir(exist_ok=True, parents=True)
             shutil.copy(fp, dest_fp)
 
     shutil.copytree(src.parent / "tests", dest / "tests")
-    for each in to_clean:
-        c_file_name = ".".join(each.name.split(".")[:-2]) + ".c"
-        print(f"--- Cleaning up: {each} and {c_file_name}")
-        each.unlink()
-        (each.parent / c_file_name).unlink()
+
+    if clean:
+        for each in to_clean:
+            c_file_name = ".".join(each.name.split(".")[:-2]) + ".c"
+            print(f"--- Cleaning up: {each} and {c_file_name}")
+            each.unlink()
+            (each.parent / c_file_name).unlink()
