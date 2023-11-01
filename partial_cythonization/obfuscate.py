@@ -76,8 +76,11 @@ def obfuscate_package(
     (src.parent / "_obfuscate_list.txt").write_text("\n".join(to_obfuscate))
     (src.parent / "setup_generated.py").write_text(SETUP_PY)
 
-    print("--- Running cython on selected files...")
     cmd = ["python", "setup_generated.py", "build_ext", "--inplace"]
+    print("--- Running cython on selected files")
+    print(f"---     With command: {' '.join(cmd)}")
+    print(f"---     In directory: {src_pkg_dir.absolute()}")
+
     subprocess.run(cmd, cwd=str(src_pkg_dir))
     print("--- Done.")
 
