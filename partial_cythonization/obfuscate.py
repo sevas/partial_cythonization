@@ -21,7 +21,8 @@ setup(
 )
 """
 
-def obfuscate_package(src: str, dest: str):
+
+def obfuscate_package(src: str, dest: str, compile_all: bool = False):
     """Obfuscate a python package.
 
     Parameters
@@ -56,8 +57,11 @@ def obfuscate_package(src: str, dest: str):
     to_obfuscate = []
     for mod in py_modules:
         txt = mod.read_text().split("\n")
-        if txt[0].startswith("# obfuscate_with_cython: True"):
+        if compile_all:
             to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
+        else:
+            if txt[0].startswith("# obfuscate_with_cython: True"):
+                to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
     print("--- Found: ", to_obfuscate)
 
     if not to_obfuscate:
@@ -84,11 +88,11 @@ def obfuscate_package(src: str, dest: str):
                 dest_fp.parent.mkdir(exist_ok=True, parents=True)
                 shutil.copy(matching_ext[0], dest_fp)
             else:
-                raise FileNotFoundError(f"Could not find compiled file for {fp}. This means that cython failed to compile the file.")
+                raise FileNotFoundError(
+                    f"Could not find compiled file for {fp}. This means that cython failed to compile the file.")
         else:
             dest_fp = dest / fp.relative_to(src_pkg_dir)
             dest_fp.parent.mkdir(exist_ok=True, parents=True)
             shutil.copy(fp, dest_fp)
 
     shutil.copytree(src.parent / "tests", dest / "tests")
-
