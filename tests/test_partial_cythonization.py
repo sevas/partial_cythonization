@@ -2,32 +2,25 @@
 
 """Tests for `partial_cythonization` package."""
 
-
-import unittest
-from click.testing import CliRunner
+from pathlib import Path
+import sysconfig
+import sys
+import subprocess
 
 from partial_cythonization import obfuscate
-from partial_cythonization import cli
+
+THIS_DIR = Path(__file__).parent
+PROJECT_DIR = THIS_DIR.parent
+SRC_PKG_DIR = PROJECT_DIR / "project_to_obfuscate" / "some_package"
 
 
-class TestPartial_cythonization(unittest.TestCase):
-    """Tests for `partial_cythonization` package."""
+def test_partial_cythonization_only_compiles_marked_files(tmp_path):
+    ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
+    target_dir = tmp_path / "_obfuscated"
+    obfuscate.obfuscate_package(src=SRC_PKG_DIR, dest=target_dir, clean=True)
 
-    def setUp(self):
-        """Set up test fixtures, if any."""
+    assert (target_dir / "some_package" / "subpkg" / f"mod11{ext_suffix}").exists()
+    assert (target_dir / "some_package" / f"mod2{ext_suffix}").exists()
 
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-
-    def test_000_something(self):
-        """Test something."""
-
-    def test_command_line_interface(self):
-        """Test the CLI."""
-        runner = CliRunner()
-        result = runner.invoke(cli.main)
-        assert result.exit_code == 0
-        assert 'partial_cythonization.cli.main' in result.output
-        help_result = runner.invoke(cli.main, ['--help'])
-        assert help_result.exit_code == 0
-        assert '--help  Show this message and exit.' in help_result.output
+    test_cmd = [sys.executable, "-m", "pytest", str(target_dir/"tests")]
+    subprocess.check_call(test_cmd, cwd=target_dir)

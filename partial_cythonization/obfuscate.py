@@ -23,7 +23,7 @@ setup(
 
 
 def obfuscate_package(
-    src: str, dest: str, compile_all: bool = False, clean: bool = False
+    src: str | Path, dest: str | Path, compile_all: bool = False, clean: bool = False
 ):
     """Obfuscate a python package.
 
