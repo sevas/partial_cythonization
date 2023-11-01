@@ -40,10 +40,16 @@ def obfuscate_package(src: str, dest: str):
     src_pkg_dir = src.parent
 
     all_modules = []
+    ignored_files = []
+    for fp in src.rglob("*"):
+        if fp.is_dir():
+            continue
+        if fp.suffix in (".py", ".txt", ".csv"):
+            all_modules.append(fp)
+        else:
+            ignored_files.append(fp)
 
-    for fp in src.rglob("*.py"):
-        all_modules.append(fp)
-
+    print("--- Ignored files: ", ignored_files)
     print("--- Collecting files to obfuscate...")
     to_obfuscate = []
     for mod in all_modules:
@@ -51,6 +57,10 @@ def obfuscate_package(src: str, dest: str):
         if txt[0].startswith("# obfuscate_with_cython: True"):
             to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
     print("--- Found: ", to_obfuscate)
+
+    if not to_obfuscate:
+        print("--- No files to obfuscate.")
+        return
 
     (src.parent / f"_obfuscate_list.txt").write_text("\n".join(to_obfuscate))
     (src.parent / "setup_generated.py").write_text(SETUP_PY)

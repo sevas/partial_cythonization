@@ -8,3 +8,15 @@ def test_numpy_func():
 
 def test_pure_py_func():
     mod2.pure_python_function([1, 2, 3])
+
+
+
+def test_sample_data():
+    expected = [
+        (1, "aaa"),
+        (2, "bbb"),
+        (3, "ccc"),
+        (4, "ddd"),
+    ]
+
+    assert expected == mod2.sample_data()
