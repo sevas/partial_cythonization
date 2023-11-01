@@ -1,6 +1,7 @@
 """Main module."""
 import subprocess
 import shutil
+import sysconfig
 from pathlib import Path
 
 SETUP_PY = """
@@ -85,11 +86,12 @@ def obfuscate_package(
     print("--- Done.")
 
     print("--- Copying package files with obfuscated modules")
+    ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
     to_clean = []
     for fp in included_files:
         if str(fp.relative_to(src_pkg_dir)) in to_obfuscate:
             # copy compiled file
-            matching_ext = list(fp.parent.glob(fp.stem + "*.so"))
+            matching_ext = list(fp.parent.glob(fp.stem + ext_suffix))
             if matching_ext:
                 dest_fp = dest / matching_ext[0].relative_to(src_pkg_dir)
                 dest_fp.parent.mkdir(exist_ok=True, parents=True)
@@ -108,7 +110,7 @@ def obfuscate_package(
 
     if clean:
         for each in to_clean:
-            c_file_name = ".".join(each.name.split(".")[:-2]) + ".c"
+            c_file_name = each.name.replace(ext_suffix, ".c")
             print(f"--- Cleaning up: {each} and {c_file_name}")
             each.unlink()
             (each.parent / c_file_name).unlink()
