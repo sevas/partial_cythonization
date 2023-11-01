@@ -39,20 +39,22 @@ def obfuscate_package(src: str, dest: str):
     work_dir = src.parent.parent
     src_pkg_dir = src.parent
 
-    all_modules = []
+    included_files = []
     ignored_files = []
     for fp in src.rglob("*"):
         if fp.is_dir():
             continue
         if fp.suffix in (".py", ".txt", ".csv"):
-            all_modules.append(fp)
+            included_files.append(fp)
         else:
             ignored_files.append(fp)
+
+    py_modules = [each for each in included_files if each.suffix == ".py"]
 
     print("--- Ignored files: ", ignored_files)
     print("--- Collecting files to obfuscate...")
     to_obfuscate = []
-    for mod in all_modules:
+    for mod in py_modules:
         txt = mod.read_text().split("\n")
         if txt[0].startswith("# obfuscate_with_cython: True"):
             to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
@@ -72,7 +74,7 @@ def obfuscate_package(src: str, dest: str):
 
     print("--- Copying package files with obfuscated modules")
 
-    for fp in all_modules:
+    for fp in included_files:
         if str(fp.relative_to(src_pkg_dir)) in to_obfuscate:
             # copy compiled file
             pattern = fp.stem + "*.so"
