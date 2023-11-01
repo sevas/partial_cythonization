@@ -77,16 +77,16 @@ def obfuscate_package(src: str, dest: str, compile_all: bool = False):
     print("--- Done.")
 
     print("--- Copying package files with obfuscated modules")
-
+    to_clean = []
     for fp in included_files:
         if str(fp.relative_to(src_pkg_dir)) in to_obfuscate:
             # copy compiled file
-            pattern = fp.stem + "*.so"
             matching_ext = list(fp.parent.glob(fp.stem + "*.so"))
             if matching_ext:
                 dest_fp = dest / matching_ext[0].relative_to(src_pkg_dir)
                 dest_fp.parent.mkdir(exist_ok=True, parents=True)
                 shutil.copy(matching_ext[0], dest_fp)
+                to_clean.append(matching_ext[0])
             else:
                 raise FileNotFoundError(
                     f"Could not find compiled file for {fp}. This means that cython failed to compile the file.")
@@ -96,3 +96,8 @@ def obfuscate_package(src: str, dest: str, compile_all: bool = False):
             shutil.copy(fp, dest_fp)
 
     shutil.copytree(src.parent / "tests", dest / "tests")
+    for each in to_clean:
+        c_file_name = ".".join(each.name.split(".")[:-2]) + ".c"
+        print(f"--- Cleaning up: {each} and {c_file_name}")
+        each.unlink()
+        (each.parent / c_file_name).unlink()
