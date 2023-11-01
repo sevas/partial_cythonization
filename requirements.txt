@@ -2,3 +2,4 @@ click
 pytest
 pytest-cov
 cython
+numpy
