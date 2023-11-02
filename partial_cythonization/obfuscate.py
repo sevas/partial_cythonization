@@ -38,6 +38,10 @@ def should_exclude(fp: Path, exclude_list: List[str]) -> bool:
     return False
 
 
+def detect_numba_usage(txt):
+    return "import numba" in txt or "from numba" in txt
+
+
 def obfuscate_package(
     src: str | Path,
     dest: str | Path,
@@ -92,11 +96,15 @@ def obfuscate_package(
             ignored_files.append(fp)
 
     # no need to cythonize init.py files
-    py_modules = [
-        each
-        for each in included_files
-        if each.suffix == ".py" and each.name != "__init__.py"
-    ]
+    py_modules = [each for each in included_files if each.suffix == ".py" and each.name != "__init__.py"]
+
+    # detect files using numba and remove them from the list of module to cythonize
+    for each in py_modules:
+        txt = each.read_text()
+        if detect_numba_usage(txt):
+            print(f"!!! File {each} uses the numba jit compiler, and cannot be cythonized.")
+            py_modules.remove(each)
+            included_files.append(each)
 
     print("--- Ignored files: ", ignored_files)
     print("--- Collecting files to obfuscate...")

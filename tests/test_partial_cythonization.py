@@ -31,6 +31,7 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
         "included": [
             f"some_package/mod2{ext_suffix}",
             "some_package/mod1.py",
+            "some_package/mod3_nb.py",
             "some_package/__init__.py",
             f"some_package/subpkg/mod11{ext_suffix}",
             "some_package/subpkg/__init__.py",
@@ -42,6 +43,7 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
         "excluded": [
             "some_package/subpkg/mod11.py",
             "some_package/mod2.py",
+            f"some_package/mod3_nb{ext_suffix}",
             f"some_package/__init__{ext_suffix}",
             f"some_package/subpkg/__init__{ext_suffix}",
             "some_package/subpkg2/never_share.py",
@@ -78,6 +80,7 @@ def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_on
         "included": [
             f"some_package/mod2{ext_suffix}",
             f"some_package/mod1{ext_suffix}",
+            "some_package/mod3_nb.py",
             "some_package/__init__.py",
             f"some_package/subpkg/mod11{ext_suffix}",
             "some_package/subpkg/__init__.py",
@@ -90,6 +93,7 @@ def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_on
             "some_package/subpkg/mod11.py",
             "some_package/mod2.py",
             "some_package/mod1.py",
+            f"some_package/mod3_nb{ext_suffix}",
             f"some_package/__init__{ext_suffix}",
             f"some_package/subpkg/__init__{ext_suffix}",
             "some_package/subpkg2/never_share.py",
