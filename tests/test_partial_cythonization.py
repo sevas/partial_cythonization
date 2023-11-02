@@ -17,7 +17,7 @@ SRC_PKG_DIR = PROJECT_DIR / "project_to_obfuscate" / "some_package"
 def test_partial_cythonization_only_compiles_marked_files(tmp_path):
     ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
     target_dir = tmp_path / "_obfuscated"
-    include_data = ["*.txt", "*.csv"]
+    include_data = ["*.txt", "*data/*.csv"]
     always_exclude = ["some_package/subpkg2/*"]
     obfuscate.obfuscate_package(
         src=SRC_PKG_DIR,

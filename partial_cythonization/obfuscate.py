@@ -26,7 +26,7 @@ setup(
 
 def should_include(fp: Path, include_list: List[str]) -> bool:
     for pat in include_list:
-        if fnmatch.fnmatch(fp.name, pat):
+        if fnmatch.fnmatch(fp, pat):
             return True
     return False
 
@@ -86,7 +86,7 @@ def obfuscate_package(
             ignored_files.append(fp)
         elif fp.suffix == ".py":
             included_files.append(fp)
-        elif should_include(fp, include_list=include_data):
+        elif should_include(fp.relative_to(src_pkg_dir), include_list=include_data):
             included_files.append(fp)
         else:
             ignored_files.append(fp)

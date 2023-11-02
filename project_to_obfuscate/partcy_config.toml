@@ -1,6 +1,6 @@
 
 include_data = [
-    "*.csv",
+    "*data/*.csv",
     "*.txt",
 ]
 
