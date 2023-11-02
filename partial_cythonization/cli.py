@@ -16,14 +16,13 @@ def main(src, dest, compile_all, clean, config):
 
     cfg = toml.load(config)
 
-    print(cfg)
     obfuscate_package(
         src,
         dest,
         compile_all=compile_all,
         clean=clean,
-        include_data=cfg["config"]["include_data"],
-        always_exclude=cfg["config"]["always_exclude"],
+        include_data=cfg["include_data"],
+        always_exclude=cfg["always_exclude"],
     )
     return 0
 
