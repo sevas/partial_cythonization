@@ -72,6 +72,7 @@ def obfuscate_package(
     dest = Path(dest)
     shutil.rmtree(dest, ignore_errors=True)
     dest.mkdir(exist_ok=True, parents=True)
+    ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
 
     if include_data is None:
         include_data = []
@@ -94,6 +95,11 @@ def obfuscate_package(
 
         elif fp.suffix == ".py":
             included_files.append(fp)
+        elif fp.suffix == ".pyx":
+            if fp.with_suffix(ext_suffix).exists():
+                included_files.append(fp.with_suffix(ext_suffix))
+            else:
+                logger.warning(f"File {fp} is a cython source file, but no compiled version was found. Ignoring.")
         elif should_include(fp.relative_to(src_pkg_dir), include_list=include_data):
             included_files.append(fp)
         else:
@@ -152,7 +158,6 @@ def obfuscate_package(
 
     logger.info("")
     logger.info("Copying package files with obfuscated modules")
-    ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
     to_clean = []
     for fp in included_files:
         if str(fp.relative_to(src_pkg_dir)) in to_obfuscate:
