@@ -4,6 +4,7 @@ import click
 from partial_cythonization.obfuscate import obfuscate_package
 import toml
 
+
 @click.command()
 @click.argument("src", type=click.Path(exists=True))
 @click.argument("dest", type=click.Path(exists=False))
@@ -16,7 +17,14 @@ def main(src, dest, compile_all, clean, config):
     cfg = toml.load(config)
 
     print(cfg)
-    obfuscate_package(src, dest, compile_all=compile_all, clean=clean, include_data=cfg["config"]["include_data"])
+    obfuscate_package(
+        src,
+        dest,
+        compile_all=compile_all,
+        clean=clean,
+        include_data=cfg["config"]["include_data"],
+        always_exclude=cfg["config"]["always_exclude"],
+    )
     return 0
 
 

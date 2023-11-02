@@ -18,10 +18,20 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
     ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
     target_dir = tmp_path / "_obfuscated"
     include_data = ["*.txt", "*.csv"]
-    obfuscate.obfuscate_package(src=SRC_PKG_DIR, dest=target_dir, clean=True, include_data=include_data)
+    always_exclude = ["some_package/subpkg2/*"]
+    obfuscate.obfuscate_package(
+        src=SRC_PKG_DIR,
+        dest=target_dir,
+        clean=True,
+        include_data=include_data,
+        always_exclude=always_exclude,
+    )
 
     assert (target_dir / "some_package" / "subpkg" / f"mod11{ext_suffix}").exists()
     assert (target_dir / "some_package" / f"mod2{ext_suffix}").exists()
+    assert not (target_dir / "some_package" / "subpkg2" / f"never_share{ext_suffix}").exists()
+    assert not (target_dir / "some_package" / "subpkg2" / "never_share.py").exists()
 
-    test_cmd = [sys.executable, "-m", "pytest", str(target_dir/"tests"), "--no-cov"]
+    test_cmd = [sys.executable, "-m", "pytest", str(target_dir / "tests"), "--no-cov"]
     subprocess.check_call(test_cmd, cwd=target_dir)
+

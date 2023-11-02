@@ -1,0 +1,10 @@
+[config]
+
+include_data = [
+    "*.csv",
+    "*.txt",
+]
+
+always_exclude = [
+    "some_package/subpkg2/*"
+]
