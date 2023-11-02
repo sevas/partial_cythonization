@@ -2,7 +2,10 @@
 import sys
 import click
 from partial_cythonization.obfuscate import obfuscate_package
+import logging
 import toml
+
+logger = logging.getLogger("partcy")
 
 
 @click.command()
@@ -11,9 +14,11 @@ import toml
 @click.option("--compile-all", "-a", is_flag=True, default=False)
 @click.option("--clean", "-c", is_flag=True, default=False)
 @click.option("--config", type=click.Path(exists=True))
-def main(src, dest, compile_all, clean, config):
+@click.option("--log-level", "-l", type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]))
+def main(src, dest, compile_all, clean, config, log_level):
     """Console script for partial_cythonization."""
 
+    logger.setLevel(log_level or "INFO")
     cfg = toml.load(config)
 
     obfuscate_package(
