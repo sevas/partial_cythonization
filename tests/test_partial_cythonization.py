@@ -27,11 +27,82 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
         always_exclude=always_exclude,
     )
 
-    assert (target_dir / "some_package" / "subpkg" / f"mod11{ext_suffix}").exists()
-    assert (target_dir / "some_package" / f"mod2{ext_suffix}").exists()
-    assert not (target_dir / "some_package" / "subpkg2" / f"never_share{ext_suffix}").exists()
-    assert not (target_dir / "some_package" / "subpkg2" / "never_share.py").exists()
+    expected = {
+        "included": [
+            f"some_package/mod2{ext_suffix}",
+            "some_package/mod1.py",
+            "some_package/__init__.py",
+            f"some_package/subpkg/mod11{ext_suffix}",
+            "some_package/subpkg/__init__.py",
+            "some_package/data/file1.csv",
+            "some_package/data/file3.csv",
+            "some_package/version.txt",
+
+        ],
+        "excluded": [
+            "some_package/subpkg/mod11.py",
+            "some_package/mod2.py",
+            f"some_package/__init__{ext_suffix}",
+            f"some_package/subpkg/__init__{ext_suffix}",
+            "some_package/subpkg2/never_share.py",
+            f"some_package/subpkg2/never_share{ext_suffix}",
+            "some_package/subpkg2/__init__.py",
+        ],
+    }
+
+    for fp in expected["included"]:
+        assert (target_dir / fp).exists(), f"{fp} should be in obfuscated package"
+
+    for fp in expected["excluded"]:
+        assert not (target_dir / fp).exists(), f"{fp} should not be in obfuscated package"
 
     test_cmd = [sys.executable, "-m", "pytest", str(target_dir / "tests"), "--no-cov"]
     subprocess.check_call(test_cmd, cwd=target_dir)
 
+
+def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_ones(tmp_path):
+    ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
+    target_dir = tmp_path / "_obfuscated"
+    include_data = ["*.txt", "*data/*.csv"]
+    always_exclude = ["some_package/subpkg2/*"]
+    obfuscate.obfuscate_package(
+        src=SRC_PKG_DIR,
+        dest=target_dir,
+        clean=True,
+        compile_all=True,
+        include_data=include_data,
+        always_exclude=always_exclude,
+    )
+
+    expected = {
+        "included": [
+            f"some_package/mod2{ext_suffix}",
+            f"some_package/mod1{ext_suffix}",
+            "some_package/__init__.py",
+            f"some_package/subpkg/mod11{ext_suffix}",
+            "some_package/subpkg/__init__.py",
+            "some_package/data/file1.csv",
+            "some_package/data/file3.csv",
+            "some_package/version.txt",
+
+        ],
+        "excluded": [
+            "some_package/subpkg/mod11.py",
+            "some_package/mod2.py",
+            "some_package/mod1.py",
+            f"some_package/__init__{ext_suffix}",
+            f"some_package/subpkg/__init__{ext_suffix}",
+            "some_package/subpkg2/never_share.py",
+            f"some_package/subpkg2/never_share{ext_suffix}",
+            "some_package/subpkg2/__init__.py",
+        ],
+    }
+
+    for fp in expected["included"]:
+        assert (target_dir / fp).exists(), f"{fp} should be in obfuscated package"
+
+    for fp in expected["excluded"]:
+        assert not (target_dir / fp).exists(), f"{fp} should not be in obfuscated package"
+
+    test_cmd = [sys.executable, "-m", "pytest", str(target_dir / "tests"), "--no-cov"]
+    subprocess.check_call(test_cmd, cwd=target_dir)
