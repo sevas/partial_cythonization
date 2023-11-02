@@ -48,7 +48,6 @@ def obfuscate_package(
     if include_data is None:
         include_data = []
 
-    work_dir = src.parent.parent
     src_pkg_dir = src.parent
 
     included_files = []
@@ -59,7 +58,6 @@ def obfuscate_package(
             if fnmatch.fnmatch(fp.name, pat):
                 return True
         return False
-
 
     for fp in src.rglob("*"):
         if fp.is_dir() or fp.suffix == ".pyc":
@@ -81,17 +79,16 @@ def obfuscate_package(
     to_obfuscate = []
     for mod in py_modules:
         # print(f"--- Detecting if {mod} needs to be cythonized")
-        try:
-            txt = mod.read_text().split("\n")
-        except UnicodeDecodeError:
-            txt_b = mod.read_bytes()
-            import chardet
-            c = chardet.detect(txt_b)
-            print(f"--- Could not open {mod} with encoding {c}")
-            continue
         if compile_all:
             to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
         else:
+            try:
+                txt = mod.read_text().split("\n")
+            except UnicodeDecodeError:
+                txt_b = mod.read_bytes()
+
+                txt  = txt_b.decode("utf-8", "ignore")
+
             if txt[0].startswith("# obfuscate_with_cython: True"):
                 to_obfuscate.append(str(mod.relative_to(src_pkg_dir)))
     print("--- Found: ", to_obfuscate)

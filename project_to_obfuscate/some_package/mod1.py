@@ -1,3 +1,6 @@
+# This preset is an update of F606 based on new CSVs from this update:
+# 番台
+
 from .mod2 import pure_python_function, numpy_function
 
 
