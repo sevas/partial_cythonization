@@ -23,7 +23,7 @@ Free software: MIT license
 Invoking the following command:
 
 ```bash
-python partial_cythonization/cli.py path/to/pkg_to_obfuscate path/to/obfuscated_pkg/destination
+python partial_cythonization/cli.py path/to/repo_dir/pkg_to_obfuscate path/to/obfuscated_pkg_destination
 ```
 
 will look at all the source files in `pkg_to_obfuscate` and look for those with the following comment at the top:
@@ -38,15 +38,17 @@ def bar(): ...
 ```
 
 For each such file, it will compile the file to a python extension file and copy it to the destination directory.
-Other source files will vbe copied as is.
+Other source files will be copied as is.
 
 ## Obfuscate all eligible files in a package
 
-By using the `-a` flag, all eligible files will be obfuscated.
+By using the `--compile-all`/`-a` flag, all eligible files will be obfuscated.
 
 ```bash
-python partial_cythonization/cli.py path/to/pkg_to_obfuscate path/to/obfuscated_pkg/destination -a
-
+python partial_cythonization/cli.py path/to/repo_dir/pkg_to_obfuscate path/to/obfuscated_pkg_destination -a
+cd path/to/repo_dir
+export PYTHONPATH=path/to/obfuscated_pkg_destination
+pytest tests/ -v
 ```
 
 An eligible file is a file that:
@@ -61,10 +63,25 @@ Since we build extensions in-place, after a successful run, the source package w
 
 You may use the `-c`/`--clean` flag to remove them.
 
+# How to make sure that the resulting package works the same as the original one?
+
+The best way to make sure that the resulting package works the same as the original one is to run the tests. This program will copy the `tests/` folder in the destination dir, if it exists. These tests should be runnable with the obfuscated package the same way you run them on the original package, assuming tests source files are relocatable.
+
+If the tests are not relocatable, we do not provide a turn-key solution.
+You may however run the original test suite by changing the `PYTHONPATH` variable to point to the obfuscated package directory instead of the original one in the source tree.
+
+For instance:
+
+```bash
+python partial_cythonization/cli.py path/to/repo_dir/pkg_to_obfuscate path/to/obfuscated_pkg_destination
+cd path/to/repo_dir
+export PYTHONPATH=path/to/obfuscated_pkg_destination
+pytest tests/ -v
+```
 
 # Configuration
 
-The configuration file is a `toml` file that must be passed to the command line with the `--cconfig` option.
+The configuration file is a `toml` file that must be passed to the command line with the `--config` option.
 
 It supports two keys:
 - `include_data`: a list of file patterns for data files to be included in the obfuscated package.
