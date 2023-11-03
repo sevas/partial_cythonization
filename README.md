@@ -3,12 +3,14 @@
 Illustrate how to partially or completely obfuscate a python package with cython.
 
 This is useful for the case where you want to distribute a package but do not want to share the source code, and get at
-least the same level of obfuscation as with language compiled with gcc/clang/cl.
+least the same level of obfuscation as with a language compiled with gcc/clang/cl.
 
 Note that even though we are using cython, do not expect huge speedups.
 The compiled code will not be optimized, since no type annotations are added.
 Nonetheless, the cython developers claim that you can get
-a [20%-50% speedup](https://cython.readthedocs.io/en/latest/src/tutorial/pure.html) on average.
+a [20%-50% speedup](https://cython.readthedocs.io/en/latest/src/tutorial/pure.html) when compiling pure python files with cython.
+
+The goal of this project is to share obfuscated code, not to speed up your code.
 
 # License
 
