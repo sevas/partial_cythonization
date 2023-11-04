@@ -28,6 +28,7 @@ def main(src, dest, compile_all, clean, config, log_level):
         clean=clean,
         include_data=cfg["include_data"],
         always_exclude=cfg["always_exclude"],
+        never_obfuscate=cfg["never_obfuscate"]
     )
     return 0
 

@@ -24,7 +24,7 @@ obfuscate_list = obfuscate_list_file.read_text().split("\\n")
 
 setup(
     name='Hello world app',
-    ext_modules=cythonize(obfuscate_list)
+    ext_modules=cythonize(obfuscate_list, compiler_directives={'language_level': 3})
 )
 """
 
@@ -54,6 +54,7 @@ def obfuscate_package(
     clean: bool = False,
     include_data=None,
     always_exclude=None,
+    never_obfuscate=None
 ):
     """Obfuscate a python package.
 
@@ -80,6 +81,8 @@ def obfuscate_package(
     if always_exclude is None:
         always_exclude = []
 
+    never_obfuscate = [] if not never_obfuscate else never_obfuscate
+
     src_pkg_dir = src.parent
 
     included_files = []
@@ -92,7 +95,6 @@ def obfuscate_package(
 
         if should_exclude(fp.relative_to(src_pkg_dir), exclude_list=always_exclude):
             continue
-
         elif fp.suffix == ".py":
             included_files.append(fp)
         elif fp.suffix == ".pyx":
@@ -105,12 +107,12 @@ def obfuscate_package(
         else:
             ignored_files.append(fp)
 
-    # no need to cythonize init.py files
-    py_modules = [each for each in included_files if each.suffix == ".py" and each.name != "__init__.py"]
+    # filter out files marked to never be obfuscated
+    py_modules = [each for each in included_files if each.suffix == ".py" and not should_include(each.relative_to(src_pkg_dir), include_list=never_obfuscate)]
 
     # detect files using numba and remove them from the list of module to cythonize
     for each in py_modules:
-        txt = each.read_text()
+        txt = each.read_text(errors="ignore")
         if detect_numba_usage(txt):
             logger.warning(f"File {each} uses the numba jit compiler, and cannot be cythonized.")
             py_modules.remove(each)
