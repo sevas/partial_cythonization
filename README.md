@@ -112,6 +112,91 @@ always_exclude = [
 - If one of your module uses numba, this will likely not work.
 - If you have you own `.pyx` files to compile with cython, you should compile them before running this tool.
 
+
+# Writing cython-compatible python code
+
+## Discovery of modules by name
+
+Any dynamic discovery of python modules should not only filter using the `".py"` file suffix.
+For the equivalent code to work after conversion with cython, you must also handle native file suffix such as `".cpXYY-platform_arch.pyd"`.
+
+In python, you can know the extension that cython will use with:
+```python
+import sysconfig
+sysconfig.get_config_var("EXT_SUFFIX")
+```
+
+## Strict typechecking
+
+If you use python type annotations, the generated cython code will use them to add
+runtime type checking.
+
+```python
+def foo(a: int, b: int): ...
+
+foo(3.2, 12)    # No error in pure python, but TypeError will be raised after the module is cythonized
+                # Although python linters and typecheckers will also warn you about mismatching types
+```
+
+## IntEnum to int conversion
+
+Similar to last example. Pure python will convert and IntEnum value to int,
+cythonized code will not.
+
+```python
+from enum import IntEnum
+
+class State(IntEnum):
+    AAA = 0
+    BBB = 1
+
+def foo(a: int, b: int): ...
+
+
+foo(State.AAA, 2)   # ok in pure python, TypeError in cython
+
+```
+Two ways around are possible.
+
+### 1. Accept both int and the Enum as param types
+
+This may be preferable if you want to restrict input values.
+
+```python
+from enum import IntEnum
+from typing import Union
+
+class State(IntEnum):
+    AAA = 0
+    BBB = 1
+
+
+def foo(a: Union[int, State], b: int): ...
+
+foo(State.AAA, 2)  # ok everywhere
+foo(1, 2)          # still ok
+```
+
+### 2. Convert to int at the call site
+
+In case int is more appropriate, or you can't modify the function.
+
+
+```python
+from enum import IntEnum
+
+class State(IntEnum):
+    AAA = 0
+    BBB = 1
+
+
+def foo(a: int, b: int): ...
+
+foo(State.AAA.value, 2)     # ok everywhere
+foo(State.AAA, 2)           # not ok, same as initial example.
+```
+
+
 # Credits
 
 This package was created with [Cookiecutter][1] and the [audreyr/cookiecutter-pypackage][2] project template.
