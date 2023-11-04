@@ -113,6 +113,16 @@ never_obfuscate = [
 * Detect source files using numba and skip them.
 * Detect source files using cython and copy the compiled extension files, skipping the `.pyx`
 
+## Platforms
+
+This utility should work on any platform supported by cython.
+It was been tested on :
+- Windows 10
+- MacOs 10.14 (Apple Silicon)
+- The tests are running on Ubuntu 20.04
+
+With cython 3.x and Python 3.11 and 3.10.
+
 # Limitations
 
 * If one of your module uses numba, this will likely not work.
