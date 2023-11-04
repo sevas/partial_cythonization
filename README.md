@@ -196,6 +196,32 @@ foo(State.AAA.value, 2)     # ok everywhere
 foo(State.AAA, 2)           # not ok, same as initial example.
 ```
 
+## Reassign types of a variable in the same scope
+
+In python, the following snippet is legal:
+
+```python
+def bar(msg: str): ...
+
+def foo(value: int):
+    value = str(value)     # TypeError in cython, `value` is typed as an int
+    bar(value)
+```
+
+In cython, like in C and C++, it is not possible to reassign the type of variable this way.
+
+Instead, use this:
+
+```python
+
+def bar(msg: str): ...
+
+def foo(value: int):
+    msg = str(value)
+    bar(msg)
+```
+Sometimes, you may also find more appropriate names for the converted value.
+
 
 # Credits
 
