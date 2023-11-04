@@ -125,8 +125,20 @@ With cython 3.x and Python 3.11 and 3.10.
 
 # Limitations
 
-* If one of your module uses numba, this will likely not work.
-* If you have you own `.pyx` files to compile with cython, you should compile them before running this tool.
+## Numba
+If a module uses numba, it will be skipped. Numba relies on analysis of the python AST to compile optimized version. After conversion with cython, this AST is gone.
+
+If you want to obfuscate numba code for delivery, you should precompile your numba code using the Ahead-of-Time (AOT) compiler: [numba-aot](https://numba.readthedocs.io/en/stable/user/pycc.html), or its future replacement.
+
+If this is not possible, you may convert your python code to cython and precompile them before running this tool, as explained in the next section. You may also make a native C or C++ extension with tools such as [pybind11](https://github.com/pybind/pybind11) and  [cffi](https://cffi.readthedocs.io/en/stable/) or Rust extension using [PyO3](https://github.com/PyO3/pyo3).
+
+All these approaches are orthogonal to this tool.
+
+## Cython `.pyx` files
+
+If you have you own `.pyx` files to compile with cython, you should compile them before running this tool.
+
+## Packaging
 
 Additionally, this tool is not intended to package a python program with all its
 dependencies as a stand-alone redistributable.
