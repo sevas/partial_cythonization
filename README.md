@@ -86,6 +86,7 @@ The configuration file is a `toml` file that must be passed to the command line 
 It supports two keys:
 - `include_data`: a list of file patterns for data files to be included in the obfuscated package.
 - `always_exclude`: a list of file patterns for files to be excluded from the obfuscated package in every case.
+- `never_obfuscate`: a list of file patterns for files that should never be obfuscated with cython.
 
 ```toml
 
@@ -96,6 +97,11 @@ include_data = [
 
 always_exclude = [
     "some_package/subpkg2/*"
+]
+
+never_obfuscate = [
+    # usually, no added value to obfuscate these files
+    "*/__init__.py",
 ]
 
 ```
