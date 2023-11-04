@@ -109,8 +109,15 @@ always_exclude = [
 
 # Limitations
 
-- If one of your module uses numba, this will likely not work.
-- If you have you own `.pyx` files to compile with cython, you should compile them before running this tool.
+* If one of your module uses numba, this will likely not work.
+* If you have you own `.pyx` files to compile with cython, you should compile them before running this tool.
+
+Additionally, this tool is not intended to package a python program with all its
+dependencies as a stand-alone redistributable.
+It does not intend to replace tools such as [PyInstaller](https://pyinstaller.org/en/stable/), [Py2App](https://py2app.readthedocs.io/en/latest/), [cx_freeze](https://cx-freeze.readthedocs.io/en/stable/)
+etc.
+
+However, it can be used to pre-process a collection of packages to be then included in such a redistributable.
 
 
 # Writing cython-compatible python code
