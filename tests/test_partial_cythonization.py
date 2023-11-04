@@ -19,12 +19,14 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
     target_dir = tmp_path / "_obfuscated"
     include_data = ["*.txt", "*data/*.csv"]
     always_exclude = ["some_package/subpkg2/*"]
+    never_obfuscate = ["*/__init__.py"]
     obfuscate.obfuscate_package(
         src=SRC_PKG_DIR,
         dest=target_dir,
         clean=True,
         include_data=include_data,
         always_exclude=always_exclude,
+        never_obfuscate=never_obfuscate,
     )
 
     expected = {
@@ -67,6 +69,8 @@ def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_on
     target_dir = tmp_path / "_obfuscated"
     include_data = ["*.txt", "*data/*.csv"]
     always_exclude = ["some_package/subpkg2/*"]
+    never_obfuscate = ["*/__init__.py"]
+
     obfuscate.obfuscate_package(
         src=SRC_PKG_DIR,
         dest=target_dir,
@@ -74,6 +78,7 @@ def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_on
         compile_all=True,
         include_data=include_data,
         always_exclude=always_exclude,
+        never_obfuscate=never_obfuscate,
     )
 
     expected = {
