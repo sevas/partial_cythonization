@@ -40,7 +40,6 @@ def test_partial_cythonization_only_compiles_marked_files(tmp_path):
             "some_package/data/file1.csv",
             "some_package/data/file3.csv",
             "some_package/version.txt",
-
         ],
         "excluded": [
             "some_package/subpkg/mod11.py",
@@ -92,7 +91,6 @@ def test_all_cythonization_compiles_all_py_files_except_the_globally_excluded_on
             "some_package/data/file1.csv",
             "some_package/data/file3.csv",
             "some_package/version.txt",
-
         ],
         "excluded": [
             "some_package/subpkg/mod11.py",

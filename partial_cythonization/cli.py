@@ -1,4 +1,5 @@
 """Console script for partial_cythonization."""
+
 import sys
 import click
 from partial_cythonization.obfuscate import obfuscate_package
@@ -28,7 +29,7 @@ def main(src, dest, compile_all, clean, config, log_level):
         clean=clean,
         include_data=cfg.get("include_data", list()),
         always_exclude=cfg.get("always_exclude", list()),
-        never_obfuscate=cfg.get("never_obfuscate", list())
+        never_obfuscate=cfg.get("never_obfuscate", list()),
     )
     return 0
 

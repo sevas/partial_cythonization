@@ -2,6 +2,7 @@
 import numpy as np
 from pathlib import Path
 
+
 def pure_python_function(arr):
     print("I'm a pure Python function!")
     res = 0
@@ -15,11 +16,10 @@ def numpy_function(arr):
     return np.sum(arr)
 
 
-
 def sample_data():
     txt = (Path(__file__).parent / "data" / "file1.csv").read_text()
     out = []
-    for l in txt.splitlines():
-        n, s = l.split(",")
+    for line in txt.splitlines():
+        n, s = line.split(",")
         out.append((int(n), s.lstrip().rstrip()))
     return out

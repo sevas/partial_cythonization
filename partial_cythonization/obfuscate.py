@@ -1,4 +1,5 @@
 """Main module."""
+
 import subprocess
 import shutil
 import sysconfig
@@ -54,7 +55,7 @@ def obfuscate_package(
     clean: bool = False,
     include_data=None,
     always_exclude=None,
-    never_obfuscate=None
+    never_obfuscate=None,
 ):
     """Obfuscate a python package.
 
@@ -108,7 +109,11 @@ def obfuscate_package(
             ignored_files.append(fp)
 
     # filter out files marked to never be obfuscated
-    py_modules = [each for each in included_files if each.suffix == ".py" and not should_include(each.relative_to(src_pkg_dir), include_list=never_obfuscate)]
+    py_modules = [
+        each
+        for each in included_files
+        if each.suffix == ".py" and not should_include(each.relative_to(src_pkg_dir), include_list=never_obfuscate)
+    ]
 
     # detect files using numba and remove them from the list of module to cythonize
     for each in py_modules:
@@ -196,4 +201,3 @@ def obfuscate_package(
         logger.warning("The following files were not cythonized because they use numba:")
         for each in numba_using_files:
             logger.warning(f"     {each}")
-

@@ -1,6 +1,7 @@
 # obfuscate_with_cython: True
 from numba import njit
 
+
 @njit
 def sum_nb(arr):
     res = 0

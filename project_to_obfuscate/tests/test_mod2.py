@@ -10,7 +10,6 @@ def test_pure_py_func():
     mod2.pure_python_function([1, 2, 3])
 
 
-
 def test_sample_data():
     expected = [
         (1, "aaa"),
