@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Python tests with uv
 
 on: [push]
 
@@ -14,15 +14,15 @@ jobs:
       uses: astral-sh/setup-uv@v6
       with:
         version: "latest"
-    - name: Install dependencies
+    - name: setup venv
       run: |
         uv venv
         uv run python --version
 
-    - name: Lint with flake8
+    - name: Lint with ruff
       run: |
-        uv run ruff check
-        uv run ruff format --check --diff .
+        uv run --extra lint ruff check
+        uv run --extra lint ruff format --check --diff .
     - name: Test with pytest
       run: |
         uv run --extra test pytest tests -v
