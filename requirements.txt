@@ -4,3 +4,4 @@ pytest-cov
 cython
 numpy
 numba
+setuptools
