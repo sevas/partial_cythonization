@@ -1,6 +1,34 @@
+[project]
+name = "partial_cythonization"
+version = "0.1.0"
+description = "A project demonstrating partial Cythonization."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Frederic De Groef", email = "f.degroef@gmail.com"}]
+
+dependencies = [
+    "click>=7",
+    "cython>=0.29.0",
+    "setuptools>=42.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "numba",
+    "numpy>1.24.4",
+]
+lint = [
+    "ruff",
+]
+
 [tool.black]
 line-length = 120
 
+[tool.ruff]
+line-length = 120
 
 
 [tool.coverage.run]
@@ -30,6 +58,7 @@ omit = ["project_to_obfuscate/*"]
 
 [tool.pixi.environments]
 test = ["test"]
+lint = ["lint"]
 
 [tool.pixi.workspace]
 name = "partial_cythonization"
@@ -53,3 +82,6 @@ setuptools = "*"
 pytest = "*"
 pytest-cov = "*"
 numba = "*"
+
+[tool.pixi.feature.lint.dependencies]
+ruff = "*"
