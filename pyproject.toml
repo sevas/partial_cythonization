@@ -73,6 +73,13 @@ partial_cythonization = { path = ".", editable = true }
 [tool.pixi.feature.test.tasks]
 test = "pytest tests -v"
 
+[tool.pixi.feature.lint.tasks]
+check = "ruff check ."
+fix = "ruff check . --fix"
+format = "ruff format --check ."
+fd = "ruff format --check --diff ."
+
+
 [tool.pixi.dependencies]
 cython = "*"
 click = "8.2.*"
