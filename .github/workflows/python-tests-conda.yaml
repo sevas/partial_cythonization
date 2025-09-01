@@ -23,7 +23,7 @@ jobs:
       run: |
         uv run --extra lint ruff check
         uv run --extra lint ruff format --check --diff .
-        uv run --extra lint ty check partial_cythonization tests 
+        uv run --extra lint ty check partial_cythonization tests
     - name: Test with pytest
       run: |
-        uv run --extra test pytest tests -v
+        uv run --extra test pytest tests --cov -v

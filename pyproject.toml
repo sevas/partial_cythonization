@@ -34,7 +34,7 @@ line-length = 120
 
 
 [tool.coverage.run]
-branch = true
+branch = false
 
 [tool.coverage.report]
 exclude_also = [
@@ -74,6 +74,7 @@ partial_cythonization = { path = ".", editable = true }
 
 [tool.pixi.feature.test.tasks]
 test = "pytest tests -v"
+testcov = "pytest tests -v --cov"
 
 [tool.pixi.feature.lint.tasks]
 check = "ruff check ."
@@ -97,6 +98,3 @@ numba = "*"
 
 [tool.pixi.feature.lint.dependencies]
 ruff = "*"
-
-[tool.pixi.feature.lint.pypi-dependencies]
-ty = "*"
