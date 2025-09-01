@@ -6,7 +6,7 @@ import sysconfig
 import fnmatch
 import logging
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 logging.basicConfig(format="%(asctime)s %(levelname)8s %(message)s")
 logger = logging.getLogger("partcy")
@@ -32,14 +32,14 @@ setup(
 
 def should_include(fp: Path, include_list: List[str]) -> bool:
     for pat in include_list:
-        if fnmatch.fnmatch(fp, pat):
+        if fnmatch.fnmatch(str(fp), pat):
             return True
     return False
 
 
 def should_exclude(fp: Path, exclude_list: List[str]) -> bool:
     for pat in exclude_list:
-        if fnmatch.fnmatch(fp, pat):
+        if fnmatch.fnmatch(str(fp), pat):
             return True
     return False
 
@@ -53,9 +53,9 @@ def obfuscate_package(
     dest: str | Path,
     compile_all: bool = False,
     clean: bool = False,
-    include_data=None,
-    always_exclude=None,
-    never_obfuscate=None,
+    include_data: Optional[list[str]] = None,
+    always_exclude: Optional[list[str]] = None,
+    never_obfuscate: Optional[list[str]] = None,
 ):
     """Obfuscate a python package.
 

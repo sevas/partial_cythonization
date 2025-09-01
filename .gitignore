@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 some_package/**/*.c
+setup_generated.py
 
 # C extensions
 *.so

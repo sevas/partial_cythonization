@@ -11,6 +11,7 @@ dependencies = [
     "click>=7",
     "cython>=0.29.0",
     "setuptools>=42.0.0",
+    "toml"
 ]
 
 [project.optional-dependencies]
@@ -22,6 +23,7 @@ test = [
 ]
 lint = [
     "ruff",
+    "ty"
 ]
 
 [tool.black]
@@ -58,7 +60,7 @@ omit = ["project_to_obfuscate/*"]
 
 [tool.pixi.environments]
 test = ["test"]
-lint = ["lint"]
+lint = ["lint", "default"]
 
 [tool.pixi.workspace]
 name = "partial_cythonization"
@@ -78,12 +80,15 @@ check = "ruff check ."
 fix = "ruff check . --fix"
 format = "ruff format --check ."
 fd = "ruff format --check --diff ."
+typecheck = "ty check partial_cythonization tests"
 
 
 [tool.pixi.dependencies]
 cython = "*"
 click = "8.2.*"
 setuptools = "*"
+toml = "*"
+
 
 [tool.pixi.feature.test.dependencies]
 pytest = "*"
@@ -92,3 +97,6 @@ numba = "*"
 
 [tool.pixi.feature.lint.dependencies]
 ruff = "*"
+
+[tool.pixi.feature.lint.pypi-dependencies]
+ty = "*"
